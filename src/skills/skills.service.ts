@@ -1,26 +1,47 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
+import { Skill } from './entities/skill.entity';
 
 @Injectable()
 export class SkillsService {
-  create(createSkillDto: CreateSkillDto) {
-    return 'This action adds a new skill';
+  constructor(
+    @InjectRepository(Skill) private skillRepository: Repository<Skill>,
+  ) {}
+  async create(createSkillDto: CreateSkillDto) {
+    const skill = await this.skillRepository.findOneBy({
+      name: createSkillDto.name,
+    });
+    if (skill) {
+      throw new Error('Skill already exists');
+    }
+    return await this.skillRepository.save(createSkillDto);
   }
 
-  findAll() {
-    return `This action returns all skills`;
+  async findAll() {
+    return await this.skillRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} skill`;
+    return this.skillRepository.findOneBy({ id });
   }
 
-  update(id: number, updateSkillDto: UpdateSkillDto) {
-    return `This action updates a #${id} skill`;
+  async update(id: number, updateSkillDto: UpdateSkillDto) {
+    const skill = await this.skillRepository.findOneBy({ id });
+    if (!skill) {
+      throw new Error('Skill not found');
+    }
+    Object.assign(skill, updateSkillDto);
+    return await this.skillRepository.save(skill);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} skill`;
+  async remove(id: number) {
+    const skill = await this.skillRepository.findOneBy({ id });
+    if (!skill) {
+      throw new Error('Skill not found');
+    }
+    return await this.skillRepository.remove(skill);
   }
 }
