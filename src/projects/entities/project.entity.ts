@@ -1,5 +1,11 @@
 import { Skill } from 'src/skills/entities/skill.entity';
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Project {
@@ -9,7 +15,11 @@ export class Project {
   @Column()
   name: string;
 
-  @ManyToMany(() => Skill, (skill) => skill.projects)
+  @ManyToMany(() => Skill, (skill) => skill.projects, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinTable()
   skills: Skill[];
 
   @Column()
