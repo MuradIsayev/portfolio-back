@@ -1,20 +1,20 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Skill } from 'src/skills/entities/skill.entity';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Project {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    skills : string;
+  @ManyToMany(() => Skill, (skill) => skill.projects)
+  skills: Skill[];
 
-    @Column()
-    description: string;
+  @Column()
+  description: string;
 
-    @Column()
-    url: string;
-
+  @Column()
+  url: string;
 }
