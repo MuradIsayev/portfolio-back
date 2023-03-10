@@ -1,5 +1,4 @@
-import { IsString } from "class-validator";
-import { IsNotEmpty } from "class-validator/types/decorator/decorators";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateSkillDto {
     @IsString()
