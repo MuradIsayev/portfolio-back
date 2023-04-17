@@ -1,15 +1,22 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  MessageBody,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
+  @WebSocketServer() server;
   constructor(private readonly chatService: ChatService) {}
 
-  @SubscribeMessage('createChat')
-  create(@MessageBody() createChatDto: CreateChatDto) {
-    return this.chatService.create(createChatDto);
+  @SubscribeMessage('message')
+  handleMessage(@MessageBody() body: CreateChatDto) {
+    this.server.emit('message', body.message);
+    console.log(body);
+    return body;
   }
 
   @SubscribeMessage('findAllChat')
@@ -20,15 +27,5 @@ export class ChatGateway {
   @SubscribeMessage('findOneChat')
   findOne(@MessageBody() id: number) {
     return this.chatService.findOne(id);
-  }
-
-  @SubscribeMessage('updateChat')
-  update(@MessageBody() updateChatDto: UpdateChatDto) {
-    return this.chatService.update(updateChatDto.id, updateChatDto);
-  }
-
-  @SubscribeMessage('removeChat')
-  remove(@MessageBody() id: number) {
-    return this.chatService.remove(id);
   }
 }
