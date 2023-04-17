@@ -7,6 +7,7 @@ import { config } from './config/config';
 import { DatabaseConfig } from './config/database.config';
 import { ProjectsModule } from './projects/projects.module';
 import { SkillsModule } from './skills/skills.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SkillsModule } from './skills/skills.module';
     }),
     ProjectsModule,
     SkillsModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
