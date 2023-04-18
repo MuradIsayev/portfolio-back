@@ -3,7 +3,6 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
-  ConnectedSocket,
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -15,17 +14,12 @@ export class ChatGateway {
   constructor(private readonly chatService: ChatService) {}
 
   @SubscribeMessage('message')
-  async handleMessage(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() body: CreateChatDto,
-  ) {
+  async handleMessage(@MessageBody() body: CreateChatDto) {
     return await this.chatService.handleMessage(body);
   }
 
   @SubscribeMessage('getMessage')
-  async getMessage(
-    @ConnectedSocket() socket: Socket,
-  ) {
+  async getMessage() {
     const messages = await this.chatService.findAllMessages();
     return this.server.emit('userMessage', messages);
   }

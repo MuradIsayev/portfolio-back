@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import { Socket } from 'socket.io';
 import { Guest } from './types';
 
 @Injectable()
