@@ -8,30 +8,26 @@ import {
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { Server, Socket } from 'socket.io';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import { Redis } from 'ioredis';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
   @WebSocketServer() server: Server;
-  constructor(private readonly chatService: ChatService,
-    @InjectRedis() private readonly redis: Redis) {}
+  constructor(private readonly chatService: ChatService) {}
 
   @SubscribeMessage('message')
-  async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() body: CreateChatDto) {
-    console.log(socket.listenerCount('message'));
-    this.server.emit('message', body.message);
-    await this.redis.set('key', 'value', 'EX', 10);
-    return body;
+  async handleMessage(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() body: CreateChatDto,
+  ) {
+    return await this.chatService.handleMessage(body);
   }
 
-  @SubscribeMessage('findAllChat')
-  findAll() {
-    return this.chatService.findAll();
-  }
-
-  @SubscribeMessage('findOneChat')
-  findOne(@MessageBody() id: number) {
-    return this.chatService.findOne(id);
+  @SubscribeMessage('getMessage')
+  async getMessage(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() userName: string,
+  ) {
+    const messages = await this.chatService.findAllMessages();
+    return this.server.emit('userMessage', messages);
   }
 }

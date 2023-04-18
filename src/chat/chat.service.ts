@@ -1,17 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
+import Redis from 'ioredis';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
 
 @Injectable()
 export class ChatService {
-  create(createChatDto: CreateChatDto) {
-    return 'This action adds a new chat';
+  constructor(@InjectRedis() private readonly redis: Redis) {}
+  async setMessage(body: CreateChatDto) {
+    try {
+      await this.redis.set(`message:${body.userName}`, JSON.stringify(body));
+    } catch (error) {
+      throw new Error('Error saving the message');
+    }
   }
 
-  findAll() {
-    return `This action returns all chat`;
+  async handleMessage(body: CreateChatDto) {
+    await this.setMessage(body);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chat`;
+  async findAllMessages() {
+    try {
+      const allMessages = await this.redis.keys('message:*');
+      const messages = await Promise.all(
+        allMessages.map(async (message) => {
+          const messageData = await this.redis.get(message);
+          return await JSON.parse(messageData);
+        }),
+      );
+      return messages;
+    } catch (error) {
+      throw new Error('Error finding the message');
+    }
   }
 }
