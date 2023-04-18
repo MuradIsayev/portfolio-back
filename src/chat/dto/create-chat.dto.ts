@@ -11,5 +11,9 @@ export class CreateChatDto {
 
   @IsString()
   @IsNotEmpty()
-  photoUrl: string;
+  photoURL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  uuid: string;
 }
