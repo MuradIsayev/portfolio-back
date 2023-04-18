@@ -25,7 +25,6 @@ export class ChatGateway {
   @SubscribeMessage('getMessage')
   async getMessage(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() userName: string,
   ) {
     const messages = await this.chatService.findAllMessages();
     return this.server.emit('userMessage', messages);

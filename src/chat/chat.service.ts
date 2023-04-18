@@ -2,25 +2,46 @@ import { Injectable } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { Socket } from 'socket.io';
+import { Guest } from './types';
 
 @Injectable()
 export class ChatService {
   constructor(@InjectRedis() private readonly redis: Redis) {}
-  async setMessage(body: CreateChatDto) {
+  async getGuest(body: CreateChatDto) {
+    const guest = await this.redis.get(`guest:${body.uuid}`);
+
+    if (!guest) return null;
+
+    return JSON.parse(guest);
+  }
+
+  async setGuest(guest: Guest) {
     try {
-      await this.redis.set(`message:${body.userName}`, JSON.stringify(body));
+      await this.redis.set(`guest:${guest.uuid}`, JSON.stringify(guest));
     } catch (error) {
       throw new Error('Error saving the message');
     }
   }
 
   async handleMessage(body: CreateChatDto) {
-    await this.setMessage(body);
+    const currentGuest = await this.getGuest(body);
+    if (!currentGuest) {
+      const guest: Guest = {
+        uuid: body.uuid,
+        userName: body.userName,
+        messages: [body.message],
+        photoURL: body.photoURL,
+      };
+      await this.setGuest(guest);
+    }
+    currentGuest.messages.push(body.message);
+    await this.setGuest(currentGuest);
   }
 
   async findAllMessages() {
     try {
-      const allMessages = await this.redis.keys('message:*');
+      const allMessages = await this.redis.keys('guest:*');
       const messages = await Promise.all(
         allMessages.map(async (message) => {
           const messageData = await this.redis.get(message);
