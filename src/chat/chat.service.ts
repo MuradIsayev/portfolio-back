@@ -25,15 +25,7 @@ export class ChatService {
 
   async handleMessage(body: CreateChatDto) {
     const currentGuest = await this.getGuest(body);
-    if (!currentGuest) {
-      const guest: Guest = {
-        uuid: body.uuid,
-        userName: body.userName,
-        messages: [body.message],
-        photoURL: body.photoURL,
-      };
-      await this.setGuest(guest);
-    }
+    if (!currentGuest) throw new Error('Guest not found');
     currentGuest.messages.push(body?.message);
     await this.setGuest(currentGuest);
   }
@@ -50,6 +42,19 @@ export class ChatService {
       return messages;
     } catch (error) {
       throw new Error('Error finding the message');
+    }
+  }
+
+  async create(body: CreateChatDto) {
+    const currentGuest = await this.getGuest(body);
+    if (!currentGuest) {
+      const guest: Guest = {
+        uuid: body.uuid,
+        userName: body.userName,
+        messages: [],
+        photoURL: body.photoURL,
+      };
+      await this.setGuest(guest);
     }
   }
 }
