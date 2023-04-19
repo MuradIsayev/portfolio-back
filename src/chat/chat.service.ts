@@ -26,7 +26,11 @@ export class ChatService {
   async handleMessage(body: CreateChatDto) {
     const currentGuest = await this.getGuest(body);
     if (!currentGuest) throw new Error('Guest not found');
-    currentGuest.messages.push(body?.message);
+    const message = {
+      createdAt: new Date().toISOString(),
+      message: body.message,
+    };
+    currentGuest.messages.push(message);
     await this.setGuest(currentGuest);
   }
 
@@ -39,7 +43,11 @@ export class ChatService {
           return await JSON.parse(messageData);
         }),
       );
-      return messages;
+      return messages.sort(
+        (a, b) =>
+          b.messages[b.messages.length - 1].time -
+          a.messages[a.messages.length - 1].time,
+      );
     } catch (error) {
       throw new Error('Error finding the message');
     }
