@@ -13,6 +13,12 @@ export class ChatGateway {
   @WebSocketServer() server: Server;
   constructor(private readonly chatService: ChatService) {}
 
+  @SubscribeMessage('initiate')
+  async create(@MessageBody() body: CreateChatDto) {
+    await this.chatService.create(body);
+    console.log(`${body.userName} with uid ${body.uuid} has joined the guestbook`);
+  }
+
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() body: CreateChatDto) {
     return await this.chatService.handleMessage(body);
