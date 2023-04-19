@@ -34,7 +34,7 @@ export class ChatService {
       };
       await this.setGuest(guest);
     }
-    currentGuest.messages.push(body.message);
+    currentGuest.messages.push(body?.message);
     await this.setGuest(currentGuest);
   }
 
