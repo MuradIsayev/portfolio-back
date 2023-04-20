@@ -43,11 +43,7 @@ export class ChatService {
           return await JSON.parse(messageData);
         }),
       );
-      return messages.sort(
-        (a, b) =>
-          b.messages[b.messages.length - 1].time -
-          a.messages[a.messages.length - 1].time,
-      );
+      return messages;
     } catch (error) {
       throw new Error('Error finding the message');
     }
