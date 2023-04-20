@@ -9,6 +9,8 @@ import { ProjectsModule } from './projects/projects.module';
 import { SkillsModule } from './skills/skills.module';
 import { ChatModule } from './chat/chat.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { TerminusModule } from '@nestjs/terminus';
+import { RedisHealthModule } from '@liaoliaots/nestjs-redis-health';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
     ProjectsModule,
     SkillsModule,
     ChatModule,
+    TerminusModule,
+    RedisHealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
