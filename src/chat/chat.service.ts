@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
@@ -16,16 +16,13 @@ export class ChatService {
   }
 
   async setGuest(guest: Guest) {
-    try {
+      if(!guest) throw new NotFoundException('Guest not found');
       await this.redis.set(`guest:${guest.uuid}`, JSON.stringify(guest));
-    } catch (error) {
-      throw new Error('Error saving the message');
-    }
   }
 
   async handleMessage(body: CreateChatDto) {
     const currentGuest = await this.getGuest(body);
-    if (!currentGuest) throw new Error('Guest not found');
+    if (!currentGuest) throw new NotFoundException('Guest not found');
     const message = {
       createdAt: new Date().toISOString(),
       message: body.message,
@@ -57,8 +54,18 @@ export class ChatService {
         userName: body.userName,
         messages: [],
         photoURL: body.photoURL,
+        isOnline: true,
       };
       await this.setGuest(guest);
     }
+    currentGuest.isOnline = true;
+    await this.setGuest(currentGuest);
+  }
+
+  async handleDisconnect(body: CreateChatDto) {
+    const currentGuest = await this.getGuest(body);
+    if (!currentGuest) throw new NotFoundException('Guest not found')
+    currentGuest.isOnline = false;
+    await this.setGuest(currentGuest);
   }
 }

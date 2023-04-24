@@ -15,10 +15,9 @@ export class ChatGateway {
   constructor(private readonly chatService: ChatService) {}
 
   @SubscribeMessage('initiate')
-  async create(@MessageBody() body: CreateChatDto, @ConnectedSocket() socket: Socket) {
+  async create(@MessageBody() body: CreateChatDto) {
     await this.chatService.create(body);
     console.log(`${body.userName} with uid ${body.uuid} has joined the guestbook`);
-    return this.server.emit('userJoined', socket.id);
   }
 
   @SubscribeMessage('message')
@@ -30,5 +29,11 @@ export class ChatGateway {
   async getMessage() {
     const messages = await this.chatService.findAllMessages();
     return this.server.emit('userMessage', messages);
+  }
+
+  @SubscribeMessage('signout')
+  async disconnectGuest(@MessageBody() body: CreateChatDto) {
+    await this.chatService.handleDisconnect(body);
+    console.log(`${body.userName} with uid ${body.uuid} has left the guestbook`);
   }
 }

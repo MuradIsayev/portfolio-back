@@ -3,4 +3,5 @@ export type Guest = {
   userName: string;
   messages: string[];
   photoURL: string;
+  isOnline: boolean;
 };
