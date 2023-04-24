@@ -3,10 +3,11 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
@@ -20,7 +21,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('message')
-  async handleMessage(@MessageBody() body: CreateChatDto) {
+  async handleMessage(@MessageBody() body: CreateChatDto,) {
     return await this.chatService.handleMessage(body);
   }
 
@@ -28,5 +29,11 @@ export class ChatGateway {
   async getMessage() {
     const messages = await this.chatService.findAllMessages();
     return this.server.emit('userMessage', messages);
+  }
+
+  @SubscribeMessage('signout')
+  async disconnectGuest(@MessageBody() body: CreateChatDto) {
+    await this.chatService.handleDisconnect(body);
+    console.log(`${body.userName} with uid ${body.uuid} has left the guestbook`);
   }
 }
