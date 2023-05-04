@@ -7,6 +7,11 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
 
+  @Get(':blockId')
+  getBlogs(@Param('blockId') blockId: string) {
+    return this.blogsService.getBlogs(blockId);
+  }
+
   @Post()
   create(@Body() createBlogDto: CreateBlogDto) {
     return this.blogsService.create(createBlogDto);

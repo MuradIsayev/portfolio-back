@@ -1,9 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
+import { NotionService } from 'nestjs-notion';
 
 @Injectable()
 export class BlogsService {
+  constructor(private readonly notionService: NotionService) {}
+
+  async getBlogs(blockId: string) {
+    const response = await this.notionService.blocks.children.list({
+      block_id: blockId,
+    });
+    return response.results;
+  }
+
   create(createBlogDto: CreateBlogDto) {
     return 'This action adds a new blog';
   }
