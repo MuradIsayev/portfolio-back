@@ -4,4 +4,8 @@ export class CreateBlogDto {
     @IsNotEmpty()
     @IsString()
     blockId: string;
+
+    @IsNotEmpty()
+    @IsString()
+    description: string;
 }

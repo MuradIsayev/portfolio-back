@@ -35,6 +35,7 @@ export class BlogsService {
         title,
         createdAt,
         blockId: createBlogDto.blockId,
+        description: createBlogDto.description,
       });
       return this.blogRepository.save(blogContent);
     } else {
