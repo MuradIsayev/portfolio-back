@@ -34,9 +34,6 @@ import { BlogsModule } from './blogs/blogs.module';
       imports: [ConfigModule],
       useClass: DatabaseConfig,
     }),
-    NotionModule.forRoot({
-      auth: 'secret_Ooy09BQepK2ewbBIBTjWlC5BU2vLVa6ivuMJPaJUrx2',
-    }),
     ProjectsModule,
     SkillsModule,
     ChatModule,
