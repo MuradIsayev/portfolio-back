@@ -11,6 +11,8 @@ import { ChatModule } from './chat/chat.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { TerminusModule } from '@nestjs/terminus';
 import { RedisHealthModule } from '@liaoliaots/nestjs-redis-health';
+import { NotionModule } from 'nestjs-notion';
+import { BlogsModule } from './blogs/blogs.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { RedisHealthModule } from '@liaoliaots/nestjs-redis-health';
     ChatModule,
     TerminusModule,
     RedisHealthModule,
+    BlogsModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],
