@@ -22,9 +22,9 @@ export class BlogsController {
     return this.blogsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.blogsService.findOne(+id);
+  @Get('content/:blockId')
+  findOne(@Param('blockId') blockId: string) {
+    return this.blogsService.findOne(blockId);
   }
 
   @Patch(':id')

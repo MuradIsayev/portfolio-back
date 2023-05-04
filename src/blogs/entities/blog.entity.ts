@@ -15,6 +15,5 @@ export class Blog {
     minsRead: number;
 
     @Column({ nullable: true })
-    date: Date;
+    createdAt: string;
 }
-0
