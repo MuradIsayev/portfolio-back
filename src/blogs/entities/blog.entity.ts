@@ -11,6 +11,9 @@ export class Blog {
     @Column({ length: 64 })
     title: string;
 
+    @Column({ length: 1024 })
+    description: string;
+
     @Column()
     minsRead: number;
 
