@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, MaxLength, MinLength } from "class-validator";
 
 export class CreateBlogDto {
     @IsNotEmpty()
@@ -10,4 +10,8 @@ export class CreateBlogDto {
     @IsNotEmpty()
     @IsString()
     description!: string;
+
+    @IsNumber()
+    @IsNotEmpty()
+    minsRead!: number;
 }

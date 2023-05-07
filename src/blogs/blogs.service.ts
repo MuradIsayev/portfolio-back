@@ -15,10 +15,10 @@ export class BlogsService {
   ) {}
 
   async getBlogs(blockId: string) {
-    const response = await this.notionService.blocks.children.list({
+    const data = await this.notionService.blocks.children.list({
       block_id: blockId,
     });
-    return response.results;
+    return data.results;
   }
 
   async create(createBlogDto: CreateBlogDto) {
@@ -32,10 +32,9 @@ export class BlogsService {
       const title = titleProperty.title[0].plain_text;
       const createdAt = dayjs(pageData.created_time).format('MMMM D, YYYY');
       const blogContent = this.blogRepository.create({
+        ...createBlogDto,
         title,
         createdAt,
-        blockId: createBlogDto.blockId,
-        description: createBlogDto.description,
       });
       return this.blogRepository.save(blogContent);
     } else {
