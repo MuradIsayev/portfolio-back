@@ -1,4 +1,6 @@
-import { IsNotEmpty, IsNumber, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import { IsNotEmpty, IsNumber, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
+import { CreateTagDto } from "src/tags/dto/create-tag.dto";
 
 export class CreateBlogDto {
     @IsNotEmpty()
@@ -14,4 +16,8 @@ export class CreateBlogDto {
     @IsNumber()
     @IsNotEmpty()
     minsRead!: number;
+
+    @Type(() => CreateTagDto)
+    @ValidateNested({ each: true })
+    tags!: CreateTagDto[];
 }
