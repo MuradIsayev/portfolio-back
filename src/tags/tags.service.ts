@@ -18,7 +18,14 @@ export class TagsService {
   }
 
   async findAll() {
-    return await this.tagRepository.find();
+    const uniqueTags = await this.tagRepository
+      .createQueryBuilder('tag')
+      .select('tag.name', 'tag')
+      .distinct(true)
+      .getRawMany();
+
+    return uniqueTags;
+    
   }
 
   async findOne(id: number) {
