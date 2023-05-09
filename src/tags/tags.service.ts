@@ -25,7 +25,6 @@ export class TagsService {
       .getRawMany();
 
     return uniqueTags;
-    
   }
 
   async findOne(id: number) {

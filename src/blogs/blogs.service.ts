@@ -1,11 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {  Injectable } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { NotionService } from 'nestjs-notion';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Blog } from './entities/blog.entity';
 import * as dayjs from 'dayjs';
+import { FilterTagDto } from 'src/tags/dto/filter-tag.dto';
 
 @Injectable()
 export class BlogsService {
@@ -54,7 +55,7 @@ export class BlogsService {
   }
 
   async update(id: number, updateBlogDto: UpdateBlogDto) {
-    const blogContent = await this.blogRepository.findOneBy({id});
+    const blogContent = await this.blogRepository.findOneBy({ id });
     if (!blogContent) throw new Error('Blog not found');
 
     Object.assign(blogContent, updateBlogDto);
@@ -62,9 +63,28 @@ export class BlogsService {
   }
 
   async remove(id: number) {
-    const blogContent = await this.blogRepository.findOneBy({id});
+    const blogContent = await this.blogRepository.findOneBy({ id });
     if (!blogContent) throw new Error('Blog not found');
 
     return this.blogRepository.remove(blogContent);
+  }
+
+  tagFilterOptions(query: SelectQueryBuilder<Blog>, filter: FilterTagDto) {
+    if (filter) {
+      query.andWhere('tags.name LIKE :name', { name: `%${filter}%` });
+    }
+  }
+
+  async findFiltered(filter: FilterTagDto) {
+    const query = this.blogRepository
+      .createQueryBuilder('blog')
+      .leftJoinAndSelect('blog.tags', 'tags')
+      .orderBy('blog.createdAt', 'DESC');
+
+    this.tagFilterOptions(query, filter);
+
+    const blogs = await query.getMany();
+
+    return blogs;
   }
 }
