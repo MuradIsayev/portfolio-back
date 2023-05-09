@@ -2,14 +2,13 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-import { FilterTagDto } from 'src/tags/dto/filter-tag.dto';
 
 @Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
   @Get('search/')
-  findByTag(@Query('tag') filter: FilterTagDto) {
-    return this.blogsService.findFiltered(filter);
+  findByTag(@Query('tag') tag: string) {
+    return this.blogsService.findFiltered(tag);
   }
 
   @Get(':blockId')
