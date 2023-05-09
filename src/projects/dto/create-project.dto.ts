@@ -1,11 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, IsUrl, ValidateNested } from 'class-validator';
+import { CreateSkillDto } from '../../skills/dto/create-skill.dto';
 
-class SkillDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-}
 
 export class CreateProjectDto {
   @IsNotEmpty()
@@ -21,7 +17,7 @@ export class CreateProjectDto {
   @IsUrl(undefined, { message: 'GitHub URL is not valid.' })
   url: string;
 
-  @Type(() => SkillDto)
+  @Type(() => CreateSkillDto)
   @ValidateNested({ each: true })
-  skills: SkillDto[];
+  skills: CreateSkillDto[];
 }

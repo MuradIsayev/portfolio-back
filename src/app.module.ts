@@ -13,6 +13,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { RedisHealthModule } from '@liaoliaots/nestjs-redis-health';
 import { NotionModule } from 'nestjs-notion';
 import { BlogsModule } from './blogs/blogs.module';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { BlogsModule } from './blogs/blogs.module';
     TerminusModule,
     RedisHealthModule,
     BlogsModule,
+    TagsModule,
 
   ],
   controllers: [AppController],

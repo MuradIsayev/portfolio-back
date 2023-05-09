@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
@@ -6,6 +6,10 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 @Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
+  @Get('search/')
+  findByTag(@Query('tag') tag: string) {
+    return this.blogsService.findFiltered(tag);
+  }
 
   @Get(':blockId')
   getBlogs(@Param('blockId') blockId: string) {
