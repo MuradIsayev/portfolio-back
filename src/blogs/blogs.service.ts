@@ -53,6 +53,14 @@ export class BlogsService {
     return blogContent;
   }
 
+  async findRandom() {
+    const blogs = await this.blogRepository.find();
+    const randomPost = blogs[Math.floor(Math.random() * blogs.length)];
+    if (!randomPost) throw new BadRequestException('Blog not found');
+
+    return randomPost;
+  }
+
   async update(id: number, updateBlogDto: UpdateBlogDto) {
     const blogContent = await this.blogRepository.findOneBy({ id });
     if (!blogContent) throw new BadRequestException('Blog not found');

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
@@ -11,14 +20,14 @@ export class BlogsController {
     return this.blogsService.findFiltered(tag);
   }
 
+  @Get('random')
+  findRandom() {
+    return this.blogsService.findRandom();
+  }
+
   @Get(':blockId')
   getBlogs(@Param('blockId') blockId: string) {
     return this.blogsService.getBlogs(blockId);
-  }
-
-  @Post()
-  create(@Body() createBlogDto: CreateBlogDto) {
-    return this.blogsService.create(createBlogDto);
   }
 
   @Get()
@@ -29,6 +38,11 @@ export class BlogsController {
   @Get('content/:blockId')
   findOne(@Param('blockId') blockId: string) {
     return this.blogsService.findOne(blockId);
+  }
+
+  @Post()
+  create(@Body() createBlogDto: CreateBlogDto) {
+    return this.blogsService.create(createBlogDto);
   }
 
   @Patch(':id')
