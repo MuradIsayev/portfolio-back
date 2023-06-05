@@ -11,9 +11,10 @@ import { ChatModule } from './chat/chat.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { TerminusModule } from '@nestjs/terminus';
 import { RedisHealthModule } from '@liaoliaots/nestjs-redis-health';
-import { NotionModule } from 'nestjs-notion';
 import { BlogsModule } from './blogs/blogs.module';
 import { TagsModule } from './tags/tags.module';
+import { ExperienceModule } from './experience/experience.module';
+import { WorkScheduleModule } from './work-schedule/work-schedule.module';
 
 @Module({
   imports: [
@@ -42,6 +43,8 @@ import { TagsModule } from './tags/tags.module';
     RedisHealthModule,
     BlogsModule,
     TagsModule,
+    ExperienceModule,
+    WorkScheduleModule,
 
   ],
   controllers: [AppController],
