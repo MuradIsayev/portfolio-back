@@ -1,26 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Experience } from './entities/experience.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ExperienceService {
+  constructor(
+    @InjectRepository(Experience)
+    private experienceRepository: Repository<Experience>,
+  ) {}
   create(createExperienceDto: CreateExperienceDto) {
-    return 'This action adds a new experience';
+    const experience = this.experienceRepository.create(createExperienceDto);
+    return this.experienceRepository.save(experience);
   }
 
-  findAll() {
-    return `This action returns all experience`;
+  async findAll() {
+    return await this.experienceRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} experience`;
+  async findOneById(id: number) {
+    return await this.experienceRepository.findOneBy({ id });
   }
 
-  update(id: number, updateExperienceDto: UpdateExperienceDto) {
-    return `This action updates a #${id} experience`;
+  async findOne(id: number) {
+    const experience = await this.findOneById(id);
+
+    if (!experience) {
+      throw new NotFoundException(`Experience #${id} not found`);
+    }
+
+    return experience;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} experience`;
+  async update(id: number, updateExperienceDto: UpdateExperienceDto) {
+    const experience = await this.findOneById(id);
+
+    if (!experience) {
+      throw new NotFoundException(`Experience #${id} not found`);
+    }
+    Object.assign(experience, updateExperienceDto);
+
+    return await this.experienceRepository.save(experience);
+  }
+
+  async remove(id: number) {
+    const experience = await this.findOneById(id);
+
+    if (!experience) {
+      throw new NotFoundException(`Experience #${id} not found`);
+    }
+
+    return this.experienceRepository.remove(experience);
   }
 }

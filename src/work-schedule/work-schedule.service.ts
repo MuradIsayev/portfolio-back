@@ -16,7 +16,7 @@ export class WorkScheduleService {
     return await this.workScheduleRepository.save(workSchedule);
   }
 
-  findAll() {
-    return this.workScheduleRepository.find();
+  async findAll() {
+    return await this.workScheduleRepository.find();
   }
 }
