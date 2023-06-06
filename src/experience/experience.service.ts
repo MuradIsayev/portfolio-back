@@ -41,8 +41,17 @@ export class ExperienceService {
   async findAll() {
     const experiences = await this.experienceRepository
       .createQueryBuilder('experience')
-      .leftJoinAndSelect('experience.workSchedule', 'workSchedule')
-      .getMany();
+      .leftJoin('experience.workSchedule', 'workSchedule')
+      .select([
+        'experience.id as id',
+        'experience.position as position',
+        'experience.description as description',
+        'experience.company as company',
+        'experience.startedAt as startedAt',
+        'experience.endedAt as endedAt',
+        'workSchedule.type as workScheduleType',
+      ])
+      .getRawMany();
 
     return experiences;
   }
@@ -54,9 +63,18 @@ export class ExperienceService {
   async findOne(id: number) {
     const experience = await this.experienceRepository
       .createQueryBuilder('experience')
-      .leftJoinAndSelect('experience.workSchedule', 'workSchedule')
+      .leftJoin('experience.workSchedule', 'workSchedule')
       .where('experience.id = :id', { id })
-      .getOne();
+      .select([
+        'experience.id as id',
+        'experience.position as position',
+        'experience.description as description',
+        'experience.company as company',
+        'experience.startedAt as startedAt',
+        'experience.endedAt as endedAt',
+        'workSchedule.type as workScheduleType',
+      ])
+      .getRawOne();
 
     if (!experience) {
       throw new NotFoundException(`Experience #${id} not found`);
