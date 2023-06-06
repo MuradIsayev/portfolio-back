@@ -9,7 +9,7 @@ import {
 
 @Entity()
 export class Blog {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
   @Column()

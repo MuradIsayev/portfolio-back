@@ -1,10 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Experience } from 'src/experience/entities/experience.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class WorkSchedule {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn({ type: 'bigint' })
+  id: number;
 
-    @Column({ length: 64 })
-    type: string;
+  @Column({ length: 64, type: 'varchar' })
+  type: string;
 }

@@ -23,7 +23,7 @@ export class CreateExperienceDto {
   @IsNotEmpty()
   @IsInt()
   @Type(() => Number)
-  departmentId!: number;
+  workScheduleId!: number;
 
   @IsDateString()
   @IsNotEmpty()
