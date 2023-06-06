@@ -21,11 +21,11 @@ export class Experience {
   @Column({ length: 64, type: 'varchar' })
   company: string;
 
-  @Column({ type: 'date' })
-  startedAt: Date;
+  @Column({ type: 'varchar' })
+  startedAt: string;
 
-  @Column({ nullable: true, type: 'date' })
-  endedAt: Date;
+  @Column({ nullable: true, type: 'varchar' })
+  endedAt: string;
 
   @ManyToOne(() => WorkSchedule)
   @JoinColumn({ name: 'workScheduleId' })
