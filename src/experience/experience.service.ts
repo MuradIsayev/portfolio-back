@@ -4,15 +4,30 @@ import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Experience } from './entities/experience.entity';
 import { Repository } from 'typeorm';
+import { WorkSchedule } from 'src/work-schedule/entities/work-schedule.entity';
 
 @Injectable()
 export class ExperienceService {
   constructor(
     @InjectRepository(Experience)
     private experienceRepository: Repository<Experience>,
+    @InjectRepository(WorkSchedule) private readonly workScheduleRepository: Repository<WorkSchedule>,
   ) {}
-  create(createExperienceDto: CreateExperienceDto) {
-    const experience = this.experienceRepository.create(createExperienceDto);
+  async create(createExperienceDto: CreateExperienceDto) {
+    const workSchedule = await this.workScheduleRepository.findOne({
+      where: { id: createExperienceDto.workScheduleId },
+    });
+    if (!workSchedule) {
+      throw new NotFoundException(
+        `WorkSchedule #${createExperienceDto.workScheduleId} not found`,
+      );
+    }
+
+    const experience = this.experienceRepository.create({
+      ...createExperienceDto,
+      workSchedule,
+    });
+
     return this.experienceRepository.save(experience);
   }
 
