@@ -6,7 +6,7 @@ export class Skill {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column()
+  @Column({ length: 64, type: 'varchar' })
   name: string;
 
   @ManyToMany(() => Project, (project) => project.skills)

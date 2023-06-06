@@ -12,19 +12,19 @@ export class Blog {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column()
+  @Column({ length: 1024, type: 'varchar' })
   blockId: string;
 
-  @Column({ length: 64 })
+  @Column({ length: 1024, type: 'varchar' })
   title: string;
 
-  @Column({ length: 1024 })
+  @Column({ length: 1024, type: 'varchar' })
   description: string;
 
-  @Column()
+  @Column({ type: 'int' })
   minsRead: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   createdAt: string;
 
   @ManyToMany(() => Tag, (tag) => tag.blogs, {

@@ -12,7 +12,7 @@ export class Project {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column()
+  @Column({ length: 64, type: 'varchar' })
   name: string;
 
   @ManyToMany(() => Skill, (skill) => skill.projects, {
@@ -22,9 +22,9 @@ export class Project {
   @JoinTable()
   skills: Skill[];
 
-  @Column()
+  @Column({ length: 1024, type: 'varchar' })
   description: string;
 
-  @Column()
+  @Column({ length: 1024, type: 'varchar' })
   url: string;
 }
