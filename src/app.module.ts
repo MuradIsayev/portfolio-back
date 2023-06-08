@@ -15,6 +15,7 @@ import { BlogsModule } from './blogs/blogs.module';
 import { TagsModule } from './tags/tags.module';
 import { ExperienceModule } from './experience/experience.module';
 import { WorkScheduleModule } from './work-schedule/work-schedule.module';
+import { DocumentsModule } from './documents/documents.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { WorkScheduleModule } from './work-schedule/work-schedule.module';
     TagsModule,
     ExperienceModule,
     WorkScheduleModule,
+    DocumentsModule,
 
   ],
   controllers: [AppController],
