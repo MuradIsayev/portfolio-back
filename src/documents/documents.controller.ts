@@ -1,12 +1,20 @@
 import {
+  BadRequestException,
   Controller,
+  Get,
+  Param,
   Post,
+  Res,
   UploadedFile,
   UseInterceptors,
+  StreamableFile,
 } from '@nestjs/common';
 import { DocumentsService } from './documents.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { Response } from 'express';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
 @Controller('documents')
 export class DocumentsController {
@@ -32,7 +40,7 @@ export class DocumentsController {
         if (file.mimetype.match(/\/(pdf)$/)) {
           cb(null, true);
         } else {
-          cb(new Error('Only pdf files are allowed!'), false);
+          cb(new BadRequestException('Only pdf files are allowed!'), false);
         }
       },
 
@@ -44,6 +52,21 @@ export class DocumentsController {
     }),
   )
   async uploadCV(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+    if (!file) {
+      throw new BadRequestException('File not found!');
+    } else {
+      return true;
+    }
+  }
+
+  @Get('my-cv/:filename')
+  async downloadCV(
+    @Param('filename') filename: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    {
+      const file = createReadStream(join(process.cwd(), 'uploads', filename));
+      return new StreamableFile(file);
+    }
   }
 }
