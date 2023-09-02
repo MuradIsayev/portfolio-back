@@ -32,7 +32,7 @@ export class SkillsService {
   async findOne(id: number): Promise<Skill> {
     const skill: Skill = await this.skillRepository.findOneBy({ id });
 
-    this.errorHandlerService.checkEntity(skill, `Skill ${skill.name}`);
+    this.errorHandlerService.checkEntity(skill, `Skill ${id}`);
 
     return skill;
   }
