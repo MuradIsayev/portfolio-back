@@ -4,6 +4,7 @@ import { BlogsController } from './blogs.controller';
 import { NotionModule } from 'nestjs-notion';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Blog } from './entities/blog.entity';
+import { HelperModule } from '../helper/helper.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { Blog } from './entities/blog.entity';
       auth: process.env.NOTION_TOKEN,
     }),
     TypeOrmModule.forFeature([Blog]),
+    HelperModule,
   ],
   controllers: [BlogsController],
   providers: [BlogsService],
