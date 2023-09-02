@@ -4,21 +4,29 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tag } from './entities/tag.entity';
+import { ErrorHandlerService } from '../helper/services/error-handler.service';
 
 @Injectable()
 export class TagsService {
-  constructor(@InjectRepository(Tag) private tagRepository: Repository<Tag>) {}
+  constructor(
+    @InjectRepository(Tag) private tagRepository: Repository<Tag>,
+    private readonly errorHandlerService: ErrorHandlerService,
+  ) {}
   async create(createTagDto: CreateTagDto) {
-    const tag = this.tagRepository.findOneBy({ name: createTagDto.name });
-    if (tag) {
-      throw new Error('Tag already exists');
-    }
+    try {
+      const tag = this.tagRepository.create(createTagDto);
 
-    return await this.tagRepository.save(createTagDto);
+      return await this.tagRepository.save(tag);
+    } catch (e) {
+      await this.errorHandlerService.checkDuplication(
+        e,
+        `Tag ${createTagDto.name}`,
+      );
+    }
   }
 
   async findAll() {
-    const uniqueTags = await this.tagRepository
+    const uniqueTags: Tag[] = await this.tagRepository
       .createQueryBuilder('tag')
       .select('tag.name', 'tag')
       .distinct(true)
@@ -27,26 +35,34 @@ export class TagsService {
     return uniqueTags;
   }
 
-  async findOne(id: number) {
-    return await this.tagRepository.findOneBy({ id });
+  async findOne(id: number): Promise<Tag> {
+    const tag: Tag = await this.tagRepository.findOneBy({ id });
+
+    this.errorHandlerService.checkEntity(tag, `Tag ${id}`);
+
+    return tag;
   }
 
   async update(id: number, updateTagDto: UpdateTagDto) {
-    const tag = await this.findOne(id);
-    if (!tag) {
-      throw new Error('Tag not found');
-    }
+    try {
+      const tag: Tag = await this.findOne(id);
+      Object.assign(tag, updateTagDto);
+      await this.tagRepository.save(tag);
 
-    Object.assign(tag, updateTagDto);
-    return await this.tagRepository.save(tag);
+      return true;
+    } catch (e) {
+      this.errorHandlerService.checkError(e, `Tag ${id}`);
+    }
   }
 
   async remove(id: number) {
-    const tag = await this.findOne(id);
-    if (!tag) {
-      throw new Error('Tag not found');
-    }
+    try {
+      const tag: Tag = await this.findOne(id);
+      await this.tagRepository.remove(tag);
 
-    return await this.tagRepository.remove(tag);
+      return true;
+    } catch (e) {
+      this.errorHandlerService.checkError(e, `Tag ${id}`);
+    }
   }
 }
