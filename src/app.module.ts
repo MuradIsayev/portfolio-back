@@ -16,6 +16,7 @@ import { TagsModule } from './tags/tags.module';
 import { ExperienceModule } from './experience/experience.module';
 import { WorkScheduleModule } from './work-schedule/work-schedule.module';
 import { DocumentsModule } from './documents/documents.module';
+import { HelperModule } from './helper/helper.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { DocumentsModule } from './documents/documents.module';
       imports: [ConfigModule],
       useClass: DatabaseConfig,
     }),
+    HelperModule,
     ProjectsModule,
     SkillsModule,
     ChatModule,
