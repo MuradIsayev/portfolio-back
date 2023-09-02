@@ -7,8 +7,9 @@ import { Blog } from './entities/blog.entity';
 
 @Module({
   imports: [
+    // TODO: Fix process.env issue
     NotionModule.forRoot({
-      auth: 'secret_Ooy09BQepK2ewbBIBTjWlC5BU2vLVa6ivuMJPaJUrx2',
+      auth: process.env.NOTION_TOKEN,
     }),
     TypeOrmModule.forFeature([Blog]),
   ],
