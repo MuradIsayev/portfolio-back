@@ -4,44 +4,59 @@ import { Repository } from 'typeorm';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { Skill } from './entities/skill.entity';
+import { ErrorHandlerService } from '../helper/services/error-handler.service';
 
 @Injectable()
 export class SkillsService {
   constructor(
     @InjectRepository(Skill) private skillRepository: Repository<Skill>,
+    private readonly errorHandlerService: ErrorHandlerService,
   ) {}
   async create(createSkillDto: CreateSkillDto) {
-    const skill = await this.skillRepository.findOneBy({
-      name: createSkillDto.name,
-    });
-    if (skill) {
-      throw new Error('Skill already exists');
+    try {
+      const skill = this.skillRepository.create(createSkillDto);
+
+      return await this.skillRepository.save(skill);
+    } catch (e) {
+      await this.errorHandlerService.checkDuplication(
+        e,
+        `Skill ${createSkillDto.name}`,
+      );
     }
-    return await this.skillRepository.save(createSkillDto);
   }
 
   async findAll() {
     return await this.skillRepository.find();
   }
 
-  findOne(id: number) {
-    return this.skillRepository.findOneBy({ id });
+  async findOne(id: number): Promise<Skill> {
+    const skill: Skill = await this.skillRepository.findOneBy({ id });
+
+    this.errorHandlerService.checkEntity(skill, `Skill ${id}`);
+
+    return skill;
   }
 
   async update(id: number, updateSkillDto: UpdateSkillDto) {
-    const skill = await this.skillRepository.findOneBy({ id });
-    if (!skill) {
-      throw new Error('Skill not found');
+    try {
+      const skill: Skill = await this.findOne(id);
+      Object.assign(skill, updateSkillDto);
+      await this.skillRepository.save(skill);
+
+      return true;
+    } catch (e) {
+      this.errorHandlerService.checkError(e, `Skill ${updateSkillDto.name}`);
     }
-    Object.assign(skill, updateSkillDto);
-    return await this.skillRepository.save(skill);
   }
 
   async remove(id: number) {
-    const skill = await this.skillRepository.findOneBy({ id });
-    if (!skill) {
-      throw new Error('Skill not found');
+    try {
+      const skill: Skill = await this.findOne(id);
+      await this.skillRepository.remove(skill);
+
+      return true;
+    } catch (e) {
+      this.errorHandlerService.checkError(e, `Skill ${id}`);
     }
-    return await this.skillRepository.remove(skill);
   }
 }

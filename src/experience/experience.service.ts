@@ -6,6 +6,7 @@ import { Experience } from './entities/experience.entity';
 import { Repository } from 'typeorm';
 import { WorkSchedule } from 'src/work-schedule/entities/work-schedule.entity';
 import * as dayjs from 'dayjs';
+import { ErrorHandlerService } from '../helper/services/error-handler.service';
 
 @Injectable()
 export class ExperienceService {
@@ -14,16 +15,18 @@ export class ExperienceService {
     private experienceRepository: Repository<Experience>,
     @InjectRepository(WorkSchedule)
     private readonly workScheduleRepository: Repository<WorkSchedule>,
+    private readonly errorHandlerService: ErrorHandlerService,
   ) {}
   async create(createExperienceDto: CreateExperienceDto) {
-    const workSchedule = await this.workScheduleRepository.findOne({
-      where: { id: createExperienceDto.workScheduleId },
-    });
-    if (!workSchedule) {
-      throw new NotFoundException(
-        `WorkSchedule #${createExperienceDto.workScheduleId} not found`,
-      );
-    }
+    const workSchedule: WorkSchedule =
+      await this.workScheduleRepository.findOne({
+        where: { id: createExperienceDto.workScheduleId },
+      });
+
+    this.errorHandlerService.checkEntity(
+      workSchedule,
+      `Work Schedule ${createExperienceDto.workScheduleId}`,
+    );
 
     const startedAt = dayjs(createExperienceDto.startedAt).format('MMM YYYY');
     const endedAt = dayjs(createExperienceDto.endedAt).format('MMM YYYY');
@@ -39,7 +42,7 @@ export class ExperienceService {
   }
 
   async findAll() {
-    const experiences = await this.experienceRepository
+    const experiences: Experience[] = await this.experienceRepository
       .createQueryBuilder('experience')
       .leftJoin('experience.workSchedule', 'workSchedule')
       .select([
@@ -53,6 +56,8 @@ export class ExperienceService {
       ])
       .getRawMany();
 
+    this.errorHandlerService.checkEntity(experiences, 'Experiences');
+
     return experiences;
   }
 
@@ -60,8 +65,8 @@ export class ExperienceService {
     return await this.experienceRepository.findOneBy({ id });
   }
 
-  async findOne(id: number) {
-    const experience = await this.experienceRepository
+  async findOne(id: number): Promise<Experience> {
+    const experience: Experience = await this.experienceRepository
       .createQueryBuilder('experience')
       .leftJoin('experience.workSchedule', 'workSchedule')
       .where('experience.id = :id', { id })
@@ -76,31 +81,31 @@ export class ExperienceService {
       ])
       .getRawOne();
 
-    if (!experience) {
-      throw new NotFoundException(`Experience #${id} not found`);
-    }
+    this.errorHandlerService.checkEntity(experience, `Experience ${id}`);
 
     return experience;
   }
 
   async update(id: number, updateExperienceDto: UpdateExperienceDto) {
-    const experience = await this.findOneById(id);
+    try {
+      const experience: Experience = await this.findOneById(id);
+      Object.assign(experience, updateExperienceDto);
+      await this.experienceRepository.save(experience);
 
-    if (!experience) {
-      throw new NotFoundException(`Experience #${id} not found`);
+      return true;
+    } catch (e) {
+      this.errorHandlerService.checkError(e, `Experience ${id}`);
     }
-    Object.assign(experience, updateExperienceDto);
-
-    return await this.experienceRepository.save(experience);
   }
 
   async remove(id: number) {
-    const experience = await this.findOneById(id);
+    try {
+      const experience: Experience = await this.findOneById(id);
+      await this.experienceRepository.remove(experience);
 
-    if (!experience) {
-      throw new NotFoundException(`Experience #${id} not found`);
+      return true;
+    } catch (e) {
+      this.errorHandlerService.checkError(e, `Experience ${id}`);
     }
-
-    return this.experienceRepository.remove(experience);
   }
 }

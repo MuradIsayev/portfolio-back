@@ -6,18 +6,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Blog } from './entities/blog.entity';
 import * as dayjs from 'dayjs';
+import { ErrorHandlerService } from '../helper/services/error-handler.service';
 
 @Injectable()
 export class BlogsService {
   constructor(
     private readonly notionService: NotionService,
     @InjectRepository(Blog) private readonly blogRepository: Repository<Blog>,
+    private readonly errorHandlerService: ErrorHandlerService,
   ) {}
 
   async getBlogs(blockId: string) {
     const data = await this.notionService.blocks.children.list({
       block_id: blockId,
     });
+
     return data.results;
   }
 
@@ -42,7 +45,7 @@ export class BlogsService {
     }
   }
 
-  findAll() {
+  findAll(): Promise<Blog[]> {
     return this.blogRepository.find();
   }
 
@@ -53,8 +56,16 @@ export class BlogsService {
     return blogContent;
   }
 
+  findOneById(id: number): Promise<Blog> {
+    const blog = this.blogRepository.findOneBy({ id });
+
+    this.errorHandlerService.checkEntity(blog, `Blog ${id}`);
+
+    return blog;
+  }
+
   async findRandom() {
-    const blogs = await this.blogRepository.find();
+    const blogs: Blog[] = await this.blogRepository.find();
     const randomPost = blogs[Math.floor(Math.random() * blogs.length)];
     if (!randomPost) throw new BadRequestException('Blog not found');
 
@@ -62,18 +73,26 @@ export class BlogsService {
   }
 
   async update(id: number, updateBlogDto: UpdateBlogDto) {
-    const blogContent = await this.blogRepository.findOneBy({ id });
-    if (!blogContent) throw new BadRequestException('Blog not found');
+    try {
+      const blog: Blog = await this.findOneById(id);
+      Object.assign(blog, updateBlogDto);
+      await this.blogRepository.save(blog);
 
-    Object.assign(blogContent, updateBlogDto);
-    return this.blogRepository.save(blogContent);
+      return true;
+    } catch (e) {
+      this.errorHandlerService.checkError(e, `Blog ${id}`);
+    }
   }
 
   async remove(id: number) {
-    const blogContent = await this.blogRepository.findOneBy({ id });
-    if (!blogContent) throw new BadRequestException('Blog not found');
+    try {
+      const blog: Blog = await this.findOneById(id);
+      await this.blogRepository.remove(blog);
 
-    return this.blogRepository.remove(blogContent);
+      return true;
+    } catch (e) {
+      this.errorHandlerService.checkError(e, `Blog ${id}`);
+    }
   }
 
   async findFiltered(tag: string) {
