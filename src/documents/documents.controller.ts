@@ -7,15 +7,13 @@ import {
   Res,
   UploadedFile,
   UseInterceptors,
-  StreamableFile,
 } from '@nestjs/common';
 import { DocumentsService } from './documents.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
-import { createReadStream } from 'fs';
-import { join } from 'path';
 
+const maxFileSize = 1024 * 1024 * 5; // 5MB
 @Controller('documents')
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
@@ -45,18 +43,14 @@ export class DocumentsController {
       },
 
       limits: {
-        fileSize: 1024 * 1024 * 5,
+        fileSize: maxFileSize,
       },
 
       preservePath: true,
     }),
   )
   async uploadCV(@UploadedFile() file: Express.Multer.File) {
-    if (!file) {
-      throw new BadRequestException('File not found!');
-    } else {
-      return true;
-    }
+    return await this.documentsService.uploadCV(file);
   }
 
   @Get('my-cv/:filename')
@@ -64,9 +58,6 @@ export class DocumentsController {
     @Param('filename') filename: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    {
-      const file = createReadStream(join(process.cwd(), 'uploads', filename));
-      return new StreamableFile(file);
-    }
+    return await this.documentsService.downloadCV(filename);
   }
 }
