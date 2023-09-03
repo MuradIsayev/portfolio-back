@@ -15,7 +15,7 @@ export class WorkScheduleService {
 
   async create(createWorkScheduleDto: CreateWorkScheduleDto) {
     try {
-      const workSchedule = this.create(createWorkScheduleDto);
+      const workSchedule = this.workScheduleRepository.create(createWorkScheduleDto);
 
       return await this.workScheduleRepository.save(workSchedule);
     } catch (e) {
