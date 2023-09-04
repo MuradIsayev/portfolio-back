@@ -1,4 +1,4 @@
-import { Tag } from 'src/tags/entities/tag.entity';
+import { Tag } from '../../tags/entities/tag.entity';
 import {
   PrimaryGeneratedColumn,
   Entity,
