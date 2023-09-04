@@ -1,4 +1,4 @@
-import { Experience } from 'src/experience/entities/experience.entity';
+import { Experience } from '../../experience/entities/experience.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
