@@ -1,4 +1,4 @@
-import { WorkSchedule } from 'src/work-schedule/entities/work-schedule.entity';
+import { WorkSchedule } from '../../work-schedule/entities/work-schedule.entity';
 import {
   Column,
   Entity,
