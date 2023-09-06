@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsNotEmpty, IsNumber, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
-import { CreateTagDto } from "src/tags/dto/create-tag.dto";
+import { CreateTagDto } from "../../tags/dto/create-tag.dto";
 
 export class CreateBlogDto {
     @IsNotEmpty()

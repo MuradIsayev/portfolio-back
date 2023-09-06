@@ -1,7 +1,7 @@
 import { BasicSeeder } from '../basic-seeder';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { WorkSchedule } from 'src/work-schedule/entities/work-schedule.entity';
+import { WorkSchedule } from '../../work-schedule/entities/work-schedule.entity';
 import { DataSource, Repository } from 'typeorm';
 
 @Injectable()

@@ -4,7 +4,7 @@ import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Experience } from './entities/experience.entity';
 import { Repository } from 'typeorm';
-import { WorkSchedule } from 'src/work-schedule/entities/work-schedule.entity';
+import { WorkSchedule } from '../work-schedule/entities/work-schedule.entity';
 import * as dayjs from 'dayjs';
 import { ErrorHandlerService } from '../helper/services/error-handler.service';
 
