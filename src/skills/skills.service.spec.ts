@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { universalMocker } from '../test/mock-factories';
 import { HelperModule } from '../helper/helper.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { UpdateSkillDto } from './dto/update-skill.dto';
 
 describe('SkillsService', () => {
   let service: SkillsService;
@@ -40,17 +41,15 @@ describe('SkillsService', () => {
       skill.name = 'test';
     });
 
-    it('should create a work schedule', async () => {
+    it('should create a skill', async () => {
       mockSkillsRepository.save.mockResolvedValueOnce(skill);
 
-      await expect(service.create({ name: 'test' })).resolves.toEqual(
-        skill,
-      );
+      await expect(service.create({ name: 'test' })).resolves.toEqual(skill);
 
       expect(mockSkillsRepository.save).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error if work schedule already exists', async () => {
+    it('should throw error if skill already exists', async () => {
       mockSkillsRepository.save.mockRejectedValueOnce({
         code: '23505',
       });
@@ -66,7 +65,7 @@ describe('SkillsService', () => {
       jest.clearAllMocks();
     });
 
-    it('should return all work schedules', async () => {
+    it('should return all skills', async () => {
       mockSkillsRepository.find.mockResolvedValue([] as Skill[]);
 
       const result = await service.findAll();
@@ -88,13 +87,51 @@ describe('SkillsService', () => {
       skill.name = 'test';
     });
 
-    it('should return one work schedule', async () => {
+    it('should return one skill', async () => {
       mockSkillsRepository.findOneBy.mockResolvedValueOnce(skill);
 
       const result = service.findOne(1);
       await expect(result).resolves.toMatchObject(skill);
-      
+
       expect(mockSkillsRepository.findOneBy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('update', () => {
+    let skill: Skill;
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    const updateSkillDto: UpdateSkillDto = {
+      name: 'test',
+    };
+
+    beforeEach(() => {
+      skill = new Skill();
+      skill.id = 1;
+      skill.name = 'test';
+    });
+
+    it('should update one skill', async () => {
+      service.findOne = jest.fn().mockResolvedValueOnce(skill);
+      mockSkillsRepository.save.mockResolvedValueOnce(skill);
+
+      const result = service.update(1, updateSkillDto);
+
+      await expect(result).resolves.toBeTruthy();
+      expect(service.findOne).toHaveBeenCalledTimes(1);
+      expect(mockSkillsRepository.save).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw error if skill does not exist', async () => {
+      service.findOne = jest.fn().mockRejectedValueOnce(new Error());
+
+      const result = service.update(1, { name: 'test' });
+
+      await expect(result).rejects.toThrowError();
+      expect(service.findOne).toHaveBeenCalledTimes(1);
+      expect(mockSkillsRepository.save).not.toBeCalled();
     });
   });
 
@@ -110,7 +147,7 @@ describe('SkillsService', () => {
       skill.name = 'test';
     });
 
-    it('should remove one work schedule', async () => {
+    it('should remove one skill', async () => {
       service.findOne = jest.fn().mockResolvedValueOnce(skill);
       mockSkillsRepository.remove.mockResolvedValueOnce(skill);
 
@@ -121,7 +158,7 @@ describe('SkillsService', () => {
       expect(mockSkillsRepository.remove).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error if work schedule does not exist', async () => {
+    it('should throw error if skill does not exist', async () => {
       service.findOne = jest.fn().mockRejectedValueOnce(new Error());
 
       const result = service.remove(1);

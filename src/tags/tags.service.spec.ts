@@ -6,6 +6,7 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { universalMocker } from '../test/mock-factories';
 import { HelperModule } from '../helper/helper.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { UpdateTagDto } from './dto/update-tag.dto';
 
 describe('WorkScheduleService', () => {
   let service: TagsService;
@@ -100,13 +101,51 @@ describe('WorkScheduleService', () => {
       tag.name = 'test';
     });
 
-    it('should return one work schedule', async () => {
+    it('should return one tag', async () => {
       mockTagsRepository.findOneBy.mockResolvedValueOnce(tag);
 
       const result = service.findOne(1);
       await expect(result).resolves.toMatchObject(tag);
 
       expect(mockTagsRepository.findOneBy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('update', () => {
+    let tag: Tag;
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    const updateTagDto: UpdateTagDto = {
+      name: 'test',
+    };
+
+    beforeEach(() => {
+      tag = new Tag();
+      tag.id = 1;
+      tag.name = 'test';
+    });
+
+    it('should update one tag', async () => {
+      service.findOne = jest.fn().mockResolvedValueOnce(tag);
+      mockTagsRepository.save.mockResolvedValueOnce(tag);
+
+      const result = service.update(1, updateTagDto);
+
+      await expect(result).resolves.toBeTruthy();
+      expect(service.findOne).toHaveBeenCalledTimes(1);
+      expect(mockTagsRepository.save).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw error if tag does not exist', async () => {
+      service.findOne = jest.fn().mockRejectedValueOnce(new Error());
+
+      const result = service.update(1, { name: 'test' });
+
+      await expect(result).rejects.toThrowError();
+      expect(service.findOne).toHaveBeenCalledTimes(1);
+      expect(mockTagsRepository.save).not.toBeCalled();
     });
   });
 
