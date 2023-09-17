@@ -67,7 +67,7 @@ export class ChatService {
         m.createdAt = dayjs(m.createdAt).format('DD/MM/YYYY HH:mm:ss');
       });
 
-      return allMessages;
+      return allMessages.slice(-50).reverse();
     } catch (error) {
       throw new Error('Error finding the message');
     }
