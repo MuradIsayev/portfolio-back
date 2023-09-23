@@ -64,7 +64,7 @@ export class ChatService {
       });
 
       allMessages.forEach((m) => {
-        m.createdAt = dayjs(m.createdAt).format('DD/MM/YYYY HH:mm:ss');
+        m.createdAt = dayjs(m.createdAt).format('HH:mm DD/MM/YYYY');
       });
 
       return allMessages.slice(-50).reverse();
