@@ -44,8 +44,6 @@ export function universalMocker(token: unknown): any {
   return createMock<Repository<any>>({}, { name: `${token}` });
 }
 
-// LEGACY MOCK FACTORIES
-
 export type MockType<T> = {
   [P in keyof T]?: jest.Mock<ObjectLiteral>;
 };
