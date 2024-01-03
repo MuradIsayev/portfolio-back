@@ -26,11 +26,7 @@ export class DocumentsController {
         filename: (req, file, cb) => {
           const fileName = file.originalname.split('.')[0];
           const fileExtension = file.originalname.split('.')[1];
-          const newFileName = Array(4)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          cb(null, `${fileName}-${newFileName}.${fileExtension}`);
+          cb(null, `${fileName}-${process.env.SECRET}.${fileExtension}`);
         },
       }),
 
