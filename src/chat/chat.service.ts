@@ -4,6 +4,7 @@ import Redis from 'ioredis';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Guest } from './types';
 import * as dayjs from 'dayjs';
+import { InitiateChatDto } from './dto/initiate-chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -73,13 +74,8 @@ export class ChatService {
     }
   }
 
-  async create(body: CreateChatDto) {
+  async create(body: InitiateChatDto) {
     const currentGuest = await this.getGuest(body);
-
-    if (currentGuest) {
-      currentGuest.isOnline = true;
-      return await this.setGuest(currentGuest);
-    }
 
     if (!currentGuest) {
       const guest: Guest = {
@@ -87,16 +83,21 @@ export class ChatService {
         userName: body.userName,
         messages: [],
         photoURL: body.photoURL,
-        isOnline: true,
+        isOnline: body.isOnline,
       };
-      return await this.setGuest(guest);
+
+      await this.setGuest(guest);
+    } else {
+      currentGuest.isOnline = true;
+      await this.setGuest(currentGuest);
     }
   }
 
-  async handleDisconnect(body: CreateChatDto) {
+  async handleDisconnect(body: InitiateChatDto) {
     const currentGuest = await this.getGuest(body);
+
     if (!currentGuest) throw new NotFoundException('Guest not found');
-    currentGuest.isOnline = false;
+
     await this.setGuest(currentGuest);
   }
 }
