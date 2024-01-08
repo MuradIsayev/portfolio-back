@@ -17,6 +17,7 @@ export class ProjectsService {
       const project: Project = this.projectRepository.create(createProjectDto);
       return await this.projectRepository.save(project);
     } catch (e) {
+      console.error(e);
       await this.errorHandlerService.checkDuplication(
         e,
         `Project ${createProjectDto.name}`,
