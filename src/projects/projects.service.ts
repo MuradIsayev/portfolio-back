@@ -15,6 +15,7 @@ export class ProjectsService {
   async create(createProjectDto: CreateProjectDto) {
     try {
       const project: Project = this.projectRepository.create(createProjectDto);
+      console.log(project)
       return await this.projectRepository.save(project);
     } catch (e) {
       console.error(e);
