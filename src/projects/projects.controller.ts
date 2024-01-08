@@ -18,6 +18,8 @@ export class ProjectsController {
 
   @Post()
   async create(@Body() createProjectDto: CreateProjectDto) {
+    console.log(createProjectDto)
+    console.log('API is working')
     return await this.projectsService.create(createProjectDto);
   }
 
