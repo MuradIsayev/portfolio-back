@@ -34,7 +34,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('signout')
-  async disconnectGuest(@MessageBody() body: InitiateChatDto) {
+  async disconnectGuest(@MessageBody() body: CreateChatDto) {
     await this.chatService.handleDisconnect(body);
     console.log(
       `${body.userName} with uid ${body.uuid} has left the guestbook`,
