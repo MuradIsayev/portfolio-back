@@ -97,9 +97,9 @@ export class ChatService {
     const currentGuest = await this.getGuest(body);
 
     if (!currentGuest) throw new NotFoundException('Guest not found');
-    console.log(currentGuest);
+    
     currentGuest.isOnline = false;
-    console.log(currentGuest);
+
     await this.setGuest(currentGuest);
   }
 }

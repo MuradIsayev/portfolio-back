@@ -55,7 +55,6 @@ export class ErrorHandlerService {
           error?.response?.message || `${entityName} not found`,
         );
       default:
-        console.log(error);
         throw new BadRequestException('Something went wrong');
     }
   }
