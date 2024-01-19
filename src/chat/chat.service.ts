@@ -23,7 +23,6 @@ export class ChatService {
 
     if (!guest) return;
 
-    console.log(JSON.parse(guest).userName);
     return JSON.parse(guest).userName;
   }
 

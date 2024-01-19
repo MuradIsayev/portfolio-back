@@ -54,6 +54,7 @@ export class ChatGateway {
 
     const nbOfUsers = typingUsers.length;
 
+    console.log(nbOfUsers);
     client.broadcast.emit('typing', { userName, isTyping, nbOfUsers });
   }
 
