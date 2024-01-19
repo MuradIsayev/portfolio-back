@@ -17,6 +17,16 @@ export class ChatService {
     return JSON.parse(guest);
   }
 
+  async getGuestNameById(uuid: string) {
+    console.log(uuid);
+    const guest = await this.redis.get(`guest:${uuid}`);
+
+    if (!guest) return;
+
+    console.log(JSON.parse(guest).userName);
+    return JSON.parse(guest).userName;
+  }
+
   async setGuest(guest: Guest) {
     if (!guest) throw new NotFoundException('Guest not found');
     await this.redis.set(`guest:${guest.uuid}`, JSON.stringify(guest));
@@ -97,7 +107,7 @@ export class ChatService {
     const currentGuest = await this.getGuest(body);
 
     if (!currentGuest) throw new NotFoundException('Guest not found');
-    
+
     currentGuest.isOnline = false;
 
     await this.setGuest(currentGuest);
