@@ -18,7 +18,6 @@ export class ChatService {
   }
 
   async getGuestNameById(uuid: string) {
-    console.log(uuid);
     const guest = await this.redis.get(`guest:${uuid}`);
 
     if (!guest) return;
