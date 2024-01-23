@@ -26,15 +26,19 @@ export class ChatGateway {
     );
   }
 
-  @SubscribeMessage('message')
+  @SubscribeMessage('sendMessage')
   async handleMessage(@MessageBody() body: CreateChatDto) {
-    return await this.chatService.handleMessage(body);
+    await this.chatService.handleMessage(body);
+
+    const messages = await this.chatService.findAllMessages();
+
+    return this.server.emit('updatedMessages', messages);
   }
 
-  @SubscribeMessage('getMessage')
+  @SubscribeMessage('getAllMessages')
   async getMessage() {
     const messages = await this.chatService.findAllMessages();
-    return this.server.emit('userMessage', messages);
+    return this.server.emit('allMessages', messages);
   }
 
   @SubscribeMessage('typing')
@@ -54,7 +58,6 @@ export class ChatGateway {
 
     const nbOfUsers = typingUsers.length;
 
-    console.log(nbOfUsers);
     client.broadcast.emit('typing', { userName, isTyping, nbOfUsers });
   }
 
