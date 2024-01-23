@@ -45,19 +45,19 @@ export class ChatService {
   async getWhoIsTyping(uuid: string, isTyping: boolean) {
     const typingUsers = Array.from(this.typingUsers);
 
+    const guest = await this.getGuestById(uuid);
+
+    const userName = guest.userName;
+
     if (isTyping) {
       this.typingUsers.add(uuid);
     } else {
       this.typingUsers.delete(uuid);
     }
 
-    const guest = await this.getGuestById(uuid);
-
-    const userName = guest.userName;
-
     const nbOfUsers = typingUsers.length;
 
-    return [nbOfUsers, userName];
+    return [nbOfUsers, userName, typingUsers];
   }
 
   async findAllMessages() {

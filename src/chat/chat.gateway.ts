@@ -45,12 +45,15 @@ export class ChatGateway {
     @MessageBody() { uuid, isTyping }: TypingChatDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const [nbOfUsers, userName] = await this.chatService.getWhoIsTyping(
-      uuid,
-      isTyping,
-    );
+    const [nbOfUsers, userName, typingUsers] =
+      await this.chatService.getWhoIsTyping(uuid, isTyping);
 
-    client.broadcast.emit('typing', { userName, isTyping, nbOfUsers });
+    client.broadcast.emit('typing', {
+      userName,
+      // isTyping,
+      allTypingUserIDs: typingUsers,
+      nbOfUsers,
+    });
   }
 
   @SubscribeMessage('signout')
