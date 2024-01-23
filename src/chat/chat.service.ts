@@ -8,6 +8,7 @@ import { InitiateChatDto } from './dto/initiate-chat.dto';
 
 @Injectable()
 export class ChatService {
+  private typingUsers: Set<string> = new Set(); // Set to store unique user IDs
   constructor(@InjectRedis() private readonly redis: Redis) {}
   async getGuest(body: CreateChatDto) {
     const guest = await this.redis.get(`guest:${body.uuid}`);
@@ -17,12 +18,12 @@ export class ChatService {
     return JSON.parse(guest);
   }
 
-  async getGuestNameById(uuid: string) {
+  async getGuestById(uuid: string) {
     const guest = await this.redis.get(`guest:${uuid}`);
 
     if (!guest) return;
 
-    return JSON.parse(guest).userName;
+    return JSON.parse(guest);
   }
 
   async setGuest(guest: Guest) {
@@ -39,6 +40,24 @@ export class ChatService {
     };
     currentGuest.messages.push(message);
     await this.setGuest(currentGuest);
+  }
+
+  async getWhoIsTyping(uuid: string, isTyping: boolean) {
+    const typingUsers = Array.from(this.typingUsers);
+
+    if (isTyping) {
+      this.typingUsers.add(uuid);
+    } else {
+      this.typingUsers.delete(uuid);
+    }
+
+    const guest = await this.getGuestById(uuid);
+
+    const userName = guest.userName;
+
+    const nbOfUsers = typingUsers.length;
+
+    return [nbOfUsers, userName];
   }
 
   async findAllMessages() {
@@ -105,6 +124,8 @@ export class ChatService {
     const currentGuest = await this.getGuest(body);
 
     if (!currentGuest) throw new NotFoundException('Guest not found');
+
+    this.typingUsers.delete(body.uuid);
 
     currentGuest.isOnline = false;
 

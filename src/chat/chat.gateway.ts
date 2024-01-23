@@ -15,7 +15,6 @@ import { TypingChatDto } from './dto/typing-chat.dto';
 export class ChatGateway {
   @WebSocketServer() server: Server;
 
-  private typingUsers: Set<string> = new Set(); // Set to store unique user IDs
   constructor(private readonly chatService: ChatService) {}
 
   @SubscribeMessage('initiate')
@@ -46,17 +45,10 @@ export class ChatGateway {
     @MessageBody() { uuid, isTyping }: TypingChatDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const userName = await this.chatService.getGuestNameById(uuid);
-
-    if (isTyping) {
-      this.typingUsers.add(uuid);
-    } else {
-      this.typingUsers.delete(uuid);
-    }
-
-    const typingUsers = Array.from(this.typingUsers);
-
-    const nbOfUsers = typingUsers.length;
+    const [nbOfUsers, userName] = await this.chatService.getWhoIsTyping(
+      uuid,
+      isTyping,
+    );
 
     client.broadcast.emit('typing', { userName, isTyping, nbOfUsers });
   }
@@ -64,7 +56,6 @@ export class ChatGateway {
   @SubscribeMessage('signout')
   async disconnectGuest(@MessageBody() body: CreateChatDto) {
     await this.chatService.handleDisconnect(body);
-    this.typingUsers.delete(body.uuid);
     console.log(
       `${body.userName} with uid ${body.uuid} has left the guestbook`,
     );
