@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
-import { Blogs } from './types';
+import { Blog, Tag } from './types';
 
 @Injectable()
 export class NotionService {
@@ -13,7 +13,7 @@ export class NotionService {
     this.notionToMarkdown = new NotionToMarkdown({ notionClient: this.client });
   }
 
-  async getPublishedPosts(): Promise<Blogs[]> {
+  async getPublishedPosts(): Promise<Blog[]> {
     const databaseID = process.env.NOTION_BLOG_DATABASE_ID || '';
 
     // list blog posts
@@ -38,15 +38,19 @@ export class NotionService {
     });
   }
 
-  private static pageToPostTransformer(page: any): Blogs {
+  private static pageToPostTransformer(page: any): Blog {
     return {
       id: page.id,
       title: page.properties.Title.title[0].plain_text,
-      description: page.properties.Preview.rich_text[0].plain_text,
+      description: page.properties.Description.rich_text[0].plain_text,
       slug: page.properties.Slug.formula.string,
-      date: page.properties.Date.date,
-      tags: page.properties.Tags.multi_select,
-      author: page.properties.Author.people[0].person,
+      createdAt: page.properties.Date.date.start,
+      tags: page.properties.Tags.multi_select.map((tag: Tag) => {
+        return {
+          id: tag.id,
+          name: tag.name,
+        };
+      }),
     };
   }
 }
