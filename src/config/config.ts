@@ -19,6 +19,6 @@ export const config = () => ({
   },
 
   notion: {
-    auth: process.env.NOTION_TOKEN,
+    auth: process.env.NOTION_ACCESS_TOKEN,
   },
 });
