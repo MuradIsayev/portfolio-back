@@ -10,4 +10,5 @@ export type Blog = {
   slug: string;
   createdAt: string;
   tags: Tag[];
+  minsRead: number;
 };

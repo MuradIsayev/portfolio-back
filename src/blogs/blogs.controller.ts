@@ -25,11 +25,6 @@ export class BlogsController {
     return this.blogsService.findRandom();
   }
 
-  @Get(':blockId')
-  getBlogs(@Param('blockId') blockId: string) {
-    return this.blogsService.getBlogs(blockId);
-  }
-
   @Get()
   findAll() {
     return this.blogsService.findAll();

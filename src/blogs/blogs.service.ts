@@ -1,10 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Blog } from './entities/blog.entity';
-import * as dayjs from 'dayjs';
 import { ErrorHandlerService } from '../helper/services/error-handler.service';
 import { NotionService } from './notion.service';
 
@@ -16,11 +15,8 @@ export class BlogsService {
     private readonly errorHandlerService: ErrorHandlerService,
   ) {}
 
-  async getBlogs(blockId: string) {
-    // const data = await this.notionService.blocks.children.list({
-    //   block_id: blockId,
-    // });
-    // return data.results;
+  async findAll() {
+    return await this.notionService.getPublishedPosts();
   }
 
   async create(createBlogDto: CreateBlogDto) {
@@ -41,10 +37,6 @@ export class BlogsService {
     // } else {
     //   throw new BadRequestException('Invalid title property');
     // }
-  }
-
-  async findAll() {
-    return await this.notionService.getPublishedPosts();
   }
 
   findOne(blockId: string) {

@@ -57,6 +57,7 @@ export class NotionService {
       description: page.properties.Description.rich_text[0].plain_text,
       slug: page.properties.Slug.formula.string,
       createdAt: fullDate,
+      minsRead: page.properties.ReadingTime.number,
       tags: page.properties.Tags.multi_select.map((tag: Tag) => {
         return {
           id: tag.id,
