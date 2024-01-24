@@ -1,12 +1,12 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-import { NotionService } from 'nestjs-notion';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Blog } from './entities/blog.entity';
 import * as dayjs from 'dayjs';
 import { ErrorHandlerService } from '../helper/services/error-handler.service';
+import { NotionService } from './notion.service';
 
 @Injectable()
 export class BlogsService {
@@ -17,36 +17,34 @@ export class BlogsService {
   ) {}
 
   async getBlogs(blockId: string) {
-    const data = await this.notionService.blocks.children.list({
-      block_id: blockId,
-    });
-
-    return data.results;
+    // const data = await this.notionService.blocks.children.list({
+    //   block_id: blockId,
+    // });
+    // return data.results;
   }
 
   async create(createBlogDto: CreateBlogDto) {
-    const pageData = await this.notionService.pages.retrieve({
-      page_id: createBlogDto.blockId,
-    });
-    if (!pageData) throw new BadRequestException('Page not found');
-
-    const titleProperty = pageData.properties.title;
-    if (titleProperty.type === 'title') {
-      const title = titleProperty.title[0].plain_text;
-      const createdAt = dayjs(pageData.created_time).format('MMMM D, YYYY');
-      const blogContent = this.blogRepository.create({
-        ...createBlogDto,
-        title,
-        createdAt,
-      });
-      return this.blogRepository.save(blogContent);
-    } else {
-      throw new BadRequestException('Invalid title property');
-    }
+    // const pageData = await this.notionService.pages.retrieve({
+    //   page_id: createBlogDto.blockId,
+    // });
+    // if (!pageData) throw new BadRequestException('Page not found');
+    // const titleProperty = pageData.properties.title;
+    // if (titleProperty.type === 'title') {
+    //   const title = titleProperty.title[0].plain_text;
+    //   const createdAt = dayjs(pageData.created_time).format('MMMM D, YYYY');
+    //   const blogContent = this.blogRepository.create({
+    //     ...createBlogDto,
+    //     title,
+    //     createdAt,
+    //   });
+    //   return this.blogRepository.save(blogContent);
+    // } else {
+    //   throw new BadRequestException('Invalid title property');
+    // }
   }
 
-  findAll(): Promise<Blog[]> {
-    return this.blogRepository.find();
+  async findAll() {
+    return await this.notionService.getPublishedPosts();
   }
 
   findOne(blockId: string) {
