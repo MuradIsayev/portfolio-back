@@ -3,12 +3,11 @@ export type Tag = {
   name: string;
 };
 
-export type Blogs = {
+export type Blog = {
   id: string;
   title: string;
   description: string;
   slug: string;
-  date: string;
+  createdAt: string;
   tags: Tag[];
-  author: string;
 };
