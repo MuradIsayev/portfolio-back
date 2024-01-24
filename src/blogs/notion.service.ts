@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
 import { Blog, Tag } from './types';
+import * as dayjs from 'dayjs';
+import * as relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 @Injectable()
 export class NotionService {
@@ -39,12 +43,20 @@ export class NotionService {
   }
 
   private static pageToPostTransformer(page: any): Blog {
+    const formattedDate = dayjs(page.properties.Date.created_time).format(
+      'MMMM D, YYYY',
+    );
+
+    const fromNow = dayjs(page.properties.Date.created_time).fromNow();
+
+    const fullDate = `${formattedDate} (${fromNow})`;
+
     return {
       id: page.id,
       title: page.properties.Title.title[0].plain_text,
       description: page.properties.Description.rich_text[0].plain_text,
       slug: page.properties.Slug.formula.string,
-      createdAt: page.properties.Date.date.start,
+      createdAt: fullDate,
       tags: page.properties.Tags.multi_select.map((tag: Tag) => {
         return {
           id: tag.id,
