@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
-import { Blog, Tag } from './types';
+import { Blog, SingleBlog, Tag } from './types';
 import * as dayjs from 'dayjs';
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -40,6 +40,39 @@ export class NotionService {
     return response.results.map((page) => {
       return NotionService.pageToPostTransformer(page);
     });
+  }
+
+  async getSinglePost(slug: string): Promise<SingleBlog> {
+    let post, markdown;
+
+    const databaseID = process.env.NOTION_BLOG_DATABASE_ID || '';
+
+    const response = await this.client.databases.query({
+      database_id: databaseID,
+      filter: {
+        property: 'Slug',
+        formula: {
+          string: {
+            equals: slug,
+          },
+        },
+      },
+    });
+
+    if (response.results.length === 0) {
+      throw new NotFoundException('Post not found');
+    }
+
+    const page = response.results[0];
+
+    const mdBlocks = await this.notionToMarkdown.pageToMarkdown(page.id);
+    markdown = this.notionToMarkdown.toMarkdownString(mdBlocks);
+    post = NotionService.pageToPostTransformer(page);
+
+    return {
+      post,
+      markdown,
+    };
   }
 
   private static pageToPostTransformer(page: any): Blog {
