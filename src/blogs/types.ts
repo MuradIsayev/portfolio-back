@@ -12,3 +12,8 @@ export type Blog = {
   tags: Tag[];
   minsRead: number;
 };
+
+export type SingleBlog = {
+  post: Blog;
+  markdown: string;
+};
