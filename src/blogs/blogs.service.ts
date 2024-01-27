@@ -19,6 +19,10 @@ export class BlogsService {
     return await this.notionService.getPublishedPosts();
   }
 
+  async getSinglePost(slug: string) {
+    return await this.notionService.getSinglePost(slug);
+  }
+
   async create(createBlogDto: CreateBlogDto) {
     // const pageData = await this.notionService.pages.retrieve({
     //   page_id: createBlogDto.blockId,
