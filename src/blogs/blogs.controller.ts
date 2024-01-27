@@ -12,7 +12,7 @@ import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 
-@Controller('blogs')
+@Controller('blog')
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
   @Get('search/')
@@ -28,6 +28,11 @@ export class BlogsController {
   @Get()
   findAll() {
     return this.blogsService.findAll();
+  }
+
+  @Get(':slug')
+  getSinglePost(@Param('slug') slug: string) {
+    return this.blogsService.getSinglePost(slug);
   }
 
   @Get('content/:blockId')
