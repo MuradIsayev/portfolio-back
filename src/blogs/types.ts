@@ -9,6 +9,7 @@ export type Blog = {
   description: string;
   slug: string;
   createdAt: string;
+  viewCount: number;
   tags: Tag[];
   minsRead: number;
 };
