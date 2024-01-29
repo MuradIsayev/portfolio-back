@@ -75,6 +75,44 @@ export class NotionService {
     };
   }
 
+  async updateViewCount(slug: string): Promise<void> {
+    const databaseID = process.env.NOTION_BLOG_DATABASE_ID || '';
+    const response = await this.client.databases.query({
+      database_id: databaseID,
+      filter: {
+        property: 'Slug',
+        formula: {
+          string: {
+            equals: slug,
+          },
+        },
+      },
+    });
+
+    if (response.results.length === 0) {
+      throw new NotFoundException('Post not found');
+    }
+
+    const page = response.results[0];
+
+    const viewCount = NotionService.viewCountTransformer(page);
+
+    console.log(viewCount);
+
+    await this.client.pages.update({
+      page_id: page.id,
+      properties: {
+        Views: {
+          number: viewCount + 1,
+        },
+      },
+    });
+  }
+
+  private static viewCountTransformer(page: any): number {
+    return page.properties.Views.number;
+  }
+
   private static pageToPostTransformer(page: any): Blog {
     const formattedDate = dayjs(page.properties.Date.created_time).format(
       'MMMM D, YYYY',
@@ -90,6 +128,7 @@ export class NotionService {
       description: page.properties.Description.rich_text[0].plain_text,
       slug: page.properties.Slug.formula.string,
       createdAt: fullDate,
+      viewCount: page.properties.Views.number,
       minsRead: page.properties.ReadingTime.number,
       tags: page.properties.Tags.multi_select.map((tag: Tag) => {
         return {
