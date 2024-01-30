@@ -97,8 +97,6 @@ export class NotionService {
 
     const viewCount = NotionService.viewCountTransformer(page);
 
-    console.log(viewCount);
-
     await this.client.pages.update({
       page_id: page.id,
       properties: {
@@ -120,14 +118,12 @@ export class NotionService {
 
     const fromNow = dayjs(page.properties.Date.created_time).fromNow();
 
-    const fullDate = `${formattedDate} (${fromNow})`;
-
     return {
       id: page.id,
       title: page.properties.Title.title[0].plain_text,
-      description: page.properties.Description.rich_text[0].plain_text,
       slug: page.properties.Slug.formula.string,
-      createdAt: fullDate,
+      createdAt: formattedDate,
+      fromNow: fromNow,
       viewCount: page.properties.Views.number,
       minsRead: page.properties.ReadingTime.number,
       tags: page.properties.Tags.multi_select.map((tag: Tag) => {

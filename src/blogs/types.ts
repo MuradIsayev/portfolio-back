@@ -6,9 +6,9 @@ export type Tag = {
 export type Blog = {
   id: string;
   title: string;
-  description: string;
   slug: string;
   createdAt: string;
+  fromNow: string;
   viewCount: number;
   tags: Tag[];
   minsRead: number;
