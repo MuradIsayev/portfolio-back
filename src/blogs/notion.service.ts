@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
-import { Blog, SingleBlog, Tag } from './types';
+import { Blog, SingleBlogPage, Tag } from './types';
 import * as dayjs from 'dayjs';
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -42,7 +42,7 @@ export class NotionService {
     });
   }
 
-  async getSinglePost(slug: string): Promise<SingleBlog> {
+  async getSinglePost(slug: string): Promise<SingleBlogPage> {
     let post, markdown;
 
     const databaseID = process.env.NOTION_BLOG_DATABASE_ID || '';

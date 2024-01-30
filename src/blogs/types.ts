@@ -14,7 +14,7 @@ export type Blog = {
   minsRead: number;
 };
 
-export type SingleBlog = {
+export type SingleBlogPage = {
   post: Blog;
   markdown: string;
 };
