@@ -12,7 +12,6 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { TerminusModule } from '@nestjs/terminus';
 import { RedisHealthModule } from '@liaoliaots/nestjs-redis-health';
 import { BlogsModule } from './blogs/blogs.module';
-import { TagsModule } from './tags/tags.module';
 import { ExperienceModule } from './experience/experience.module';
 import { WorkScheduleModule } from './work-schedule/work-schedule.module';
 import { DocumentsModule } from './documents/documents.module';
@@ -52,7 +51,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
     TerminusModule,
     RedisHealthModule,
     BlogsModule,
-    TagsModule,
     ExperienceModule,
     WorkScheduleModule,
     DocumentsModule,

@@ -50,7 +50,6 @@ export class ChatGateway {
 
     client.broadcast.emit('typing', {
       userName,
-      // isTyping,
       allTypingUserIDs: typingUsers,
       nbOfUsers,
     });
