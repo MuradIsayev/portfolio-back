@@ -37,6 +37,8 @@ export class NotionService {
       ],
     });
 
+    console.log('testing git push');
+
     return response.results.map((page) => {
       return NotionService.pageToPostTransformer(page);
     });
