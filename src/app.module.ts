@@ -12,11 +12,11 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { TerminusModule } from '@nestjs/terminus';
 import { RedisHealthModule } from '@liaoliaots/nestjs-redis-health';
 import { BlogsModule } from './blogs/blogs.module';
-import { TagsModule } from './tags/tags.module';
 import { ExperienceModule } from './experience/experience.module';
 import { WorkScheduleModule } from './work-schedule/work-schedule.module';
 import { DocumentsModule } from './documents/documents.module';
 import { HelperModule } from './helper/helper.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -25,6 +25,12 @@ import { HelperModule } from './helper/helper.module';
       load: [config],
       envFilePath: '.env.development',
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60, // 1 minute
+        limit: 20, // limit each IP to 20 requests per ttl
+      },
+    ]),
     RedisModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
@@ -45,13 +51,17 @@ import { HelperModule } from './helper/helper.module';
     TerminusModule,
     RedisHealthModule,
     BlogsModule,
-    TagsModule,
     ExperienceModule,
     WorkScheduleModule,
     DocumentsModule,
-
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: 'APP_GUARD',
+      useClass: ThrottlerModule,
+    },
+  ],
 })
 export class AppModule {}
