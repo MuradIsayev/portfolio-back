@@ -9,8 +9,6 @@ import { ProjectsModule } from './projects/projects.module';
 import { SkillsModule } from './skills/skills.module';
 import { ChatModule } from './chat/chat.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
-import { TerminusModule } from '@nestjs/terminus';
-import { RedisHealthModule } from '@liaoliaots/nestjs-redis-health';
 import { BlogsModule } from './blogs/blogs.module';
 import { ExperienceModule } from './experience/experience.module';
 import { WorkScheduleModule } from './work-schedule/work-schedule.module';
@@ -48,8 +46,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
     ProjectsModule,
     SkillsModule,
     ChatModule,
-    TerminusModule,
-    RedisHealthModule,
     BlogsModule,
     ExperienceModule,
     WorkScheduleModule,
