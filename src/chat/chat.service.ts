@@ -21,7 +21,7 @@ export class ChatService {
   async getGuestById(uuid: string) {
     const guest = await this.redis.get(`guest:${uuid}`);
 
-    if (!guest) return;
+    if (!guest) throw new NotFoundException('Guest could not be found by ID');
 
     return JSON.parse(guest);
   }
@@ -120,12 +120,10 @@ export class ChatService {
     }
   }
 
-  async handleDisconnect(body: CreateChatDto) {
-    const currentGuest = await this.getGuest(body);
+  async handleDisconnect(uuid: string) {
+    const currentGuest = await this.getGuestById(uuid);
 
-    if (!currentGuest) throw new NotFoundException('Guest not found');
-
-    this.typingUsers.delete(body.uuid);
+    this.typingUsers.delete(currentGuest.uuid);
 
     currentGuest.isOnline = false;
 
