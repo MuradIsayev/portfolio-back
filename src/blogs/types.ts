@@ -11,7 +11,6 @@ export type Blog = {
   fromNow: string;
   viewCount: number;
   tags: Tag[];
-  minsRead: number;
 };
 
 export type SingleBlogPage = {

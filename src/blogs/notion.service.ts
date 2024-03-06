@@ -125,7 +125,6 @@ export class NotionService {
       createdAt: formattedDate,
       fromNow: fromNow,
       viewCount: page.properties.Views.number,
-      minsRead: page.properties.ReadingTime.number,
       tags: page.properties.Tags.multi_select.map((tag: Tag) => {
         return {
           id: tag.id,
