@@ -26,8 +26,10 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('sendMessage')
-  async handleMessage(@MessageBody() body: CreateChatDto) {
-    await this.chatService.handleMessage(body);
+  async handleMessage(
+    @MessageBody() { uuid, message }: { uuid: string; message: string },
+  ) {
+    await this.chatService.handleMessage(uuid, message);
 
     const messages = await this.chatService.findAllMessages();
 

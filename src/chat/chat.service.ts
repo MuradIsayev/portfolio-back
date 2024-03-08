@@ -31,14 +31,15 @@ export class ChatService {
     await this.redis.set(`guest:${guest.uuid}`, JSON.stringify(guest));
   }
 
-  async handleMessage(body: CreateChatDto) {
-    const currentGuest = await this.getGuest(body);
-    if (!currentGuest) throw new NotFoundException('Guest not found');
-    const message = {
+  async handleMessage(uuid: string, message: string) {
+    const currentGuest = await this.getGuestById(uuid);
+
+    const newMessage = {
       createdAt: new Date().toISOString(),
-      message: body.message,
+      message: message,
     };
-    currentGuest.messages.push(message);
+
+    currentGuest.messages.push(newMessage);
     await this.setGuest(currentGuest);
   }
 
