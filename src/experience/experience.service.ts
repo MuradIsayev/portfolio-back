@@ -30,7 +30,6 @@ export class ExperienceService {
 
     const startedAt = dayjs(createExperienceDto.startedAt).format('MMM YYYY');
 
-    // ended at is optional 
     const endedAt = createExperienceDto.endedAt
       ? dayjs(createExperienceDto.endedAt).format('MMM YYYY')
       : null;
@@ -93,7 +92,20 @@ export class ExperienceService {
   async update(id: number, updateExperienceDto: UpdateExperienceDto) {
     try {
       const experience: Experience = await this.findOneById(id);
-      Object.assign(experience, updateExperienceDto);
+
+      const startedAt = updateExperienceDto.startedAt
+        ? dayjs(updateExperienceDto.startedAt).format('MMM YYYY')
+        : null;
+      const endedAt = updateExperienceDto.endedAt
+        ? dayjs(updateExperienceDto.endedAt).format('MMM YYYY')
+        : null;
+
+      Object.assign(experience, {
+        ...updateExperienceDto,
+        startedAt,
+        endedAt,
+      });
+
       await this.experienceRepository.save(experience);
 
       return true;
