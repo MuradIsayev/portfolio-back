@@ -29,7 +29,11 @@ export class ExperienceService {
     );
 
     const startedAt = dayjs(createExperienceDto.startedAt).format('MMM YYYY');
-    const endedAt = dayjs(createExperienceDto.endedAt).format('MMM YYYY');
+
+    // ended at is optional 
+    const endedAt = createExperienceDto.endedAt
+      ? dayjs(createExperienceDto.endedAt).format('MMM YYYY')
+      : null;
 
     const experience = this.experienceRepository.create({
       ...createExperienceDto,
