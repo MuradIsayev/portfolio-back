@@ -57,7 +57,14 @@ export class ExperienceService {
         'experience.endedAt as endedAt',
         'workSchedule.type as workScheduleType',
       ])
-      .getRawMany();
+      .getRawMany()
+
+    experiences.sort((a, b) => {
+      const aStartedAt = dayjs(a.startedAt, 'MMM YYYY');
+      const bStartedAt = dayjs(b.startedAt, 'MMM YYYY');
+
+      return bStartedAt.diff(aStartedAt);
+    });
 
     this.errorHandlerService.checkEntity(experiences, 'Experiences');
 
