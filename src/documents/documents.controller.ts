@@ -16,7 +16,7 @@ import { Response } from 'express';
 const maxFileSize = 1024 * 1024 * 5; // 5MB
 @Controller('documents')
 export class DocumentsController {
-  constructor(private readonly documentsService: DocumentsService) {}
+  constructor(private readonly documentsService: DocumentsService) { }
 
   @Post('upload-cv')
   @UseInterceptors(
